@@ -5,3 +5,6 @@ __pycache__/
 
 # C extensions
 *.so
+
+# Config
+Group16/config/config.py
