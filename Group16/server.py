@@ -1,7 +1,7 @@
 from flask import Flask, render_template
 from Group16.dao import database
 from Group16.config import config
-import pymysql.cursors
+from Group16.services import dataService
 import simplejson as json
 import logging
 
@@ -21,7 +21,7 @@ products = [
     }
 ]
 
-db = database.Database()
+productService = dataService.ProductService()
 
 @app.route("/")
 def index():
@@ -32,10 +32,14 @@ def getAllProducts():
     return json.dumps(products)
 
 @app.route("/test/")
-def test():
-    q = """SELECT * FROM Products"""
-    result = db.queryDB(q)
-    return json.dumps(result), 204
+def tests():
+    result = productService.getAllProducts()
+    return json.dumps(result)
+
+@app.route("/test/<id>/")
+def test(id):
+    result = productService.getProductById(id)
+    return json.dumps(result)
 
 if __name__ == "__main__":
     app.run()
