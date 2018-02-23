@@ -22,10 +22,15 @@ products = [
 ]
 
 productService = dataService.ProductService()
+retailService = dataService.RetailService()
 
 @app.route("/")
 def index():
     return render_template("index.html")
+
+#
+# Product routing
+#
 
 @app.route("/products/", methods=['POST'])
 def addProduct():
@@ -45,18 +50,34 @@ def getProductById(id):
 def updateProductById(id):
     logger.info(request.get_json())
     result = productService.updateProductById(request.get_json(), id)
-    return result
+    return result, 200
 
 @app.route("/products/<id>/", methods=['DELETE'])
 def deleteProductById(id):
     result = productService.deleteProductById(id)
-    return result
+    return result, 200
 
-@app.route("/test/", methods=['PUT'])
-def test():
-    logger.info(request.get_json())
-    result = productService.updateProductById(request.get_json())
-    return result
+#
+#  Retail routing
+#
+
+@app.route("/retail/", methods=['GET', 'POST'])
+def retail():
+    if request.method == 'GET':
+        return json.dumps(retailService.getAllLocations()), 200, {'Content-Type': 'application/json; charset=utf-8'}
+    else:
+        logger.info(request.get_json())
+        return json.dumps(retailService.addLocation(request.get_json())), 201
+
+@app.route("/retail/<id>/", methods=['GET', 'PUT', 'DELETE'])
+def retailById(id):
+    if request.method == 'GET':
+        return json.dumps(retailService.getLocationById(id)), 200, {'Content-Type': 'application:json; charset=utf-8'}
+    elif request.method == 'PUT':
+        logger.info(request.get_json())
+        return json.dumps(retailService.updateLocationById(request.get_json(), id)), 200
+    else:
+        return json.dumps(retailService.deleteLocationById(id)), 200
 
 if __name__ == "__main__":
     app.run()
