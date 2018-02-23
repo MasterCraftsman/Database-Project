@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, send_from_directory
 from Group16.dao import database
 from Group16.config import config
 from Group16.services import dataService
@@ -27,6 +27,10 @@ retailService = dataService.RetailService()
 @app.route("/")
 def index():
     return render_template("index.html")
+
+@app.route("/<path:path>")
+def path_proxy(path):
+    return app.send_static_file(path)
 
 #
 # Product routing
