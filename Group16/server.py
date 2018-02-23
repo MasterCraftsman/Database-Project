@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from Group16.dao import database
 from Group16.config import config
 from Group16.services import dataService
@@ -27,19 +27,36 @@ productService = dataService.ProductService()
 def index():
     return render_template("index.html")
 
-@app.route("/products/")
+@app.route("/products/", methods=['POST'])
+def addProduct():
+    logger.info(request.get_json())
+    result = productService.addProduct(request.get_json())
+    return json.dumps(result), 201
+
+@app.route("/products/", methods=['GET'])
 def getAllProducts():
-    return json.dumps(products)
+    return json.dumps(productService.getAllProducts()), 200, {'Content-Type': 'application/json; charset=utf-8'}
 
-@app.route("/test/")
-def tests():
-    result = productService.getAllProducts()
-    return json.dumps(result)
+@app.route("/products/<id>/", methods=['GET'])
+def getProductById(id):
+    return json.dumps(productService.getProductById(id)), 200, {'Content-Type': 'application/json; charset=utf-8'}
 
-@app.route("/test/<id>/")
-def test(id):
-    result = productService.getProductById(id)
-    return json.dumps(result)
+@app.route("/products/<id>/", methods=['PUT'])
+def updateProductById(id):
+    logger.info(request.get_json())
+    result = productService.updateProductById(request.get_json(), id)
+    return result
+
+@app.route("/products/<id>/", methods=['DELETE'])
+def deleteProductById(id):
+    result = productService.deleteProductById(id)
+    return result
+
+@app.route("/test/", methods=['PUT'])
+def test():
+    logger.info(request.get_json())
+    result = productService.updateProductById(request.get_json())
+    return result
 
 if __name__ == "__main__":
     app.run()

@@ -27,7 +27,7 @@ class Database:
             conn.close()
         return conn
         
-    def selectFromDB(self, q, params=None):
+    def queryDB(self, q, params=None, update=False):
         logger.debug('Attempting to query db with: \n%s \n', q)
         conn = self.connect_db()
         if(params is not None):
@@ -35,7 +35,12 @@ class Database:
             try:
                 with conn.cursor() as curs:
                     curs.execute(q, params)
-                    result = curs.fetchall()
+                    if (update):
+                        # commit changes on update
+                        conn.commit()
+                        result = "success"
+                    else:
+                        result = curs.fetchall()
                     logger.info(result)
                     return result
             except Exception as e:
