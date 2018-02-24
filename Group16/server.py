@@ -36,30 +36,23 @@ def path_proxy(path):
 # Product routing
 #
 
-@app.route("/products/", methods=['POST'])
-def addProduct():
-    logger.info(request.get_json())
-    result = productService.addProduct(request.get_json())
-    return json.dumps(result), 201
-
-@app.route("/products/", methods=['GET'])
-def getAllProducts():
-    return json.dumps(productService.getAllProducts()), 200, {'Content-Type': 'application/json; charset=utf-8'}
-
-@app.route("/products/<id>/", methods=['GET'])
-def getProductById(id):
-    return json.dumps(productService.getProductById(id)), 200, {'Content-Type': 'application/json; charset=utf-8'}
-
-@app.route("/products/<id>/", methods=['PUT'])
-def updateProductById(id):
-    logger.info(request.get_json())
-    result = productService.updateProductById(request.get_json(), id)
-    return result, 200
-
-@app.route("/products/<id>/", methods=['DELETE'])
-def deleteProductById(id):
-    result = productService.deleteProductById(id)
-    return result, 200
+@app.route("/products/", methods=['GET', 'POST'])
+def product():
+    if request.method == 'GET':
+        return json.dumps(productService.getAllProducts()), 200, {'Content-Type': 'application/json; charset=utf-8'}
+    else:
+        logger.info(request.get_json())
+        return json.dumps(productService.addProduct(request.get_json())), 201
+    
+@app.route("/products/<id>/", methods=['GET', 'PUT', 'DELETE'])
+def productById(id):
+    if request.method == 'GET':
+        return json.dumps(productService.getProductById(id)), 200, {'Content-Type': 'application/json; charset=utf-8'}
+    elif request.method == 'PUT':
+        logger.info(request.get_json())
+        return productService.updateProductById(request.get_json(), id), 200
+    else:
+        return productService.deleteProductById(id), 200
 
 #
 #  Retail routing
