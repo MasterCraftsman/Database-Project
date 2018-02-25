@@ -129,3 +129,63 @@ class RetailService:
         q = """DELETE FROM Retail_Locations WHERE rID=%s"""
         result = db.queryDB(q, [id], True)
         return result
+
+class SellsService:
+
+        def __init__(self):
+            pass
+
+        def getAllTransactions(self):
+            logger.info('Getting all transactions')
+            db = database.Database()
+            q = """SELECT * FROM Sells"""
+            result = db.queryDB(q)
+            return result
+
+        def getTransactionById(self,id):
+            logger.info('Getting Transaction by id: %s', id)
+            db = database.Database()
+            q = """SELECT * FROM Sells WHERE transactionID=%s"""
+            result = db.queryDB(q, [id])
+            return result
+
+        def addTransaction(self, jsonObj):
+            logger.info('%s', jsonObj)
+            logger.info('This is a %s', type(jsonObj))
+            if (isinstance(jsonObj, dict)):
+                db = database.Database()
+                q = """
+                    INSERT INTO Sells (Sales_Price, Date, Qty, Retail_Locations_rID, Products_pID, transactionID)
+                    VALUES(%s, %s, %s, %s, %s, %s)
+                """
+                params = [jsonObj['Sales_Price'], jsonObj['Date'], jsonObj['Qty'], jsonObj['Retail_Locations_rID'], jsonObj['Products_pID'], jsonObj['transactionID']]
+                result = db.queryDB(q, params, True)
+                return result
+            else:
+                return "Please send a JSON object"
+
+        def updateTransactionById(self, jsonObj, id):
+            logger.info('%s', jsonObj)
+            logger.info('%s', id)
+            if (isinstance(jsonObj, dict)):
+                if (jsonObj['transactionID'] is None or jsonObj['transactionID'] is not id):
+                    jsonObj['transacctionID'] = id
+                db = database.Database()
+                q = """
+                    UPDATE Sells
+                    SET Sales_Price = %s, Date = %s, Qty = %s, Retail_Locations_rID = %s, Products_pID = %s, # Im pretty sure that we dont need to update the ID ever
+                    WHERE transactionID = %s
+                """
+                params = [jsonObj['Sales_Price'], jsonObj['Date'], jsonObj['Qty'], jsonObj['Retail_Locations_rID'],
+                          jsonObj['Products_pID'], jsonObj['transactionID']]
+                result = db.queryDB(q, params, True)
+                return result
+            else:
+                return "Please send a JSON object"
+
+        def deleteTransactionById(self, id):
+            logger.info('Deleting transaction with id: %s', id)
+            db = database.Database()
+            q = """DELETE FROM Sells WHERE transactionID=%s"""
+            result = db.queryDB(q, [id], True)
+            return result

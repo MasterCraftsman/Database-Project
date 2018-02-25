@@ -23,6 +23,7 @@ products = [
 
 productService = dataService.ProductService()
 retailService = dataService.RetailService()
+sellsService = dataService.SellsService()
 
 @app.route("/")
 def index():
@@ -78,3 +79,25 @@ def retailById(id):
 
 if __name__ == "__main__":
     app.run()
+
+#
+# Sells routing
+#
+
+@app.route("/transactions/", methods=['GET','POST'])
+def transactions():
+    if request.method == 'GET':
+        return json.dumps(sellsService.getAllTransactions()), 200, {'Content-Type': 'application/json; charset=utf-8'}
+    else:
+        logger.info(request.get_json())
+        return json.dumps(sellsServie.addTransaction(request.get_json())), 201
+
+@app.route("/transactions/<id>/", methods=['GET','PUT','DELETE'])
+def sellsById(id):
+    if request.method == 'GET':
+        return json.dumps(sellsService.getTransactionById(id)), 200, {'Content-Type': 'application"json; charset=utf-8'}
+    elif request.method == 'PUT':
+        logger.info(request.get_json())
+        return json.dumps(sellsService.updateTransactionById(request.get_json(), id)), 200
+    else:
+        return json.dumps(sellsService.deleteTransactionById(id)), 200
