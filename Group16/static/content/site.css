@@ -1,0 +1,4 @@
+div.table-container {
+    overflow-y: auto;
+    max-height: 50%;
+}

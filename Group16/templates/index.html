@@ -3,44 +3,54 @@
 <head>
     <title>Index</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="/content/site.css">
     <script src="/scripts/site.js" type="application/javascript"></script>
 </head>
 
 <body>
     <div class="container">
+        <h1>Database Project</h1>
         <div class="row">
             <div class="col">
                 <h2>Products</h2>
-                <table id="products_table" class="table">
-                    <thead>
-                        <th scope="col">ID</th>
-                        <th scope="col">Name</th>
-                        <th scope="col">Department</th>
-                        <th scope="col">Price</th>
-                        <th scope="col">Weight</th>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
+                <div class="table-container">
+                    <table id="products_table" class="table table-sm">
+                        <thead>
+                            <th scope="col">ID</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Department</th>
+                            <th scope="col">Price</th>
+                            <th scope="col">Weight</th>
+                            <th scope="col"></th>
+                            <th scope="col"></th>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
             </div>
             <div class="col">
                 <h2>Retail Locations</h2>
-                <table id="retail_table" class="table">
-                    <thead>
-                        <th scope="col">ID</th>
-                        <th scope="col">Name</th>
-                        <th scope="col">Street</th>
-                        <th scope="col">City</th>
-                        <th scope="col">State</th>
-                        <th scope="col">Zip</th>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
+                <div class="table-container">
+                    <table id="retail_table" class="table table-sm">
+                        <thead>
+                            <th scope="col">ID</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Street</th>
+                            <th scope="col">City</th>
+                            <th scope="col">State</th>
+                            <th scope="col">Zip</th>
+                            <th scope="col"></th>
+                            <th scope="col"></th>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
         <div class="row">
-        <button id="newProdRetailBtn" class="btn btn-primary">Add new Product or Retail Location</button>
+            <button id="newProdRetailBtn" class="btn btn-primary">Add new Product or Retail Location</button>
         </div>
         <div id="newProdRetailRow" class="row" style="display: none;">
             <div class="col">
@@ -68,6 +78,59 @@
             <div class="col">
                 <h2>New Retail Location</h2>
                 <form id="newRetailForm">
+                    <div class="form-group">
+                        <label for="retailName">Location Name</label>
+                        <input id="retailName" type="text" autocomplete="off" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="retailStreet">Street</label>
+                        <input id="retailStreet" type="text" autocomplete="off" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="retailCity">City</label>
+                        <input id="retailCity" type="number" autocomplete="off" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="retailState">State</label>
+                        <input id="retailState" type="text" autocomplete="off" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="retailZip">Zip</label>
+                        <input id="retailZip" type="number" autocomplete="off" class="form-control">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+        <div class="row">
+            <div id="editProdDiv" class="col" style="visibility: hidden;">
+                <h2>Edit Product</h2>
+                <form id="editProdForm">
+                    <div class="form-group">
+                        <input id="prodId" type="hidden" autocomplete="off" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="prodName">Product Name</label>
+                        <input id="prodName" type="text" autocomplete="off" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="prodDept">Product Department</label>
+                        <input id="prodDept" type="text" autocomplete="off" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="prodPrice">Product Price</label>
+                        <input id="prodPrice" type="number" autocomplete="off" class="form-control" step="0.01" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="prodWeight">Product Weight</label>
+                        <input id="prodWeight" type="text" autocomplete="off" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+            <div id="editRetailDiv" class="col" style="visibility: hidden;">
+                <h2>Edit Retail Location</h2>
+                <form id="editRetailForm">
                     <div class="form-group">
                         <label for="retailName">Location Name</label>
                         <input id="retailName" type="text" autocomplete="off" class="form-control">
