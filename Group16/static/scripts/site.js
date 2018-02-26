@@ -45,7 +45,8 @@ function ajax(method, url, body) {
 function addListeners() {
     document.getElementById('newProdForm').addEventListener('submit', newProdSubmit);
     document.getElementById('newProdRetailBtn').addEventListener('click', toggleNewRow);
-    document.getElementById('editProdForm').addEventListener('submit', editProdSubmit);
+    document.getElementById('editProdForm').addEventListener('submit', productForm.submit);
+    document.getElementById('editProdForm').addEventListener('reset', productForm.reset);
 }
 
 function getAllProducts() {
@@ -83,9 +84,91 @@ function getAllRetailLocations() {
         });
 }
 
+class ProductForm {
+    constructor(div_container, form_id) {
+        this.div_container = document.getElementById(div_container);
+        this.form_id = form_id;
+        this.form = document.getElementById(form_id);
+    }
+
+    set product(product) {
+        this._product = product;
+    }
+
+    get product() {
+        return this._product;
+    }
+
+    show() {
+        if (this.div_container.style.visibility === 'hidden') {
+            this.div_container.style.visibility = 'visible';
+        }
+    }
+
+    hide() {
+        if (this.div_container.style.visibility === 'visible') {
+            this.div_container.style.visibility = 'hidden';
+        }
+    }
+
+    loadData(tds) {
+        var product = {
+            'pID': tds[0].innerHTML,
+            'pName': tds[1].innerHTML,
+            'pDepartment': tds[2].innerHTML,
+            'pCost': Number(tds[3].innerHTML),
+            'pWeight': tds[4].innerHTML
+        };
+        this.product = product;
+    }
+
+    populateForm() {
+        if (this.product) {
+            this.form.querySelector('#prodId').value = this.product.pID;
+            this.form.querySelector('#prodName').value = this.product.pName;
+            this.form.querySelector('#prodDept').value = this.product.pDepartment;
+            this.form.querySelector('#prodCost').value = Number(this.product.pCost);
+            this.form.querySelector('#prodWeight').value = this.product.pWeight;
+        } else {
+            alert('No product selected!');
+        }
+    }
+
+    updateProduct() {
+        var product = {
+            'pID': this.form.querySelector('#prodId').value,
+            'pName': this.form.querySelector('#prodName').value,
+            'pDepartment': this.form.querySelector('#prodDept').value,
+            'pCost': this.form.querySelector('#prodCost').value,
+            'pWeight': this.form.querySelector('#prodWeight').value
+        };
+        this.product = product;
+    }
+
+    submit() {
+        event.preventDefault();
+        event.stopPropagation();
+        productForm.updateProduct();
+        var prod = productForm.product;
+        productForm.form.reset();
+        productForm.hide();
+        editProduct(prod, prod.pID).then(function (data) {
+            console.log(data);
+            loadProductsTable();
+        });
+    }
+
+    reset() {
+        productForm.hide();
+    }
+}
+
 function loadProductsTable() {
     var prodTable = document.getElementById('products_table');
     var prodTableBody = prodTable.querySelector('tbody');
+    while (prodTableBody.firstChild) {
+        prodTableBody.removeChild(prodTableBody.firstChild);
+    }
     getAllProducts().then(function (data) {
         products = JSON.parse(data);
         products.forEach(function (prod) {
@@ -103,15 +186,15 @@ function loadProductsTable() {
             tr.appendChild(td_delete);
             prodTableBody.appendChild(tr);
         });
-        var updateBtns = document.querySelectorAll('button.update');
+        var updateBtns = prodTable.querySelectorAll('button.update');
         updateBtns.forEach(function (btn) {
-            btn.removeEventListener('click', toggleProductForm);
-            btn.addEventListener('click', toggleProductForm);
+            btn.removeEventListener('click', updateProdBtn);
+            btn.addEventListener('click', updateProdBtn);
         });
-        var deleteBtns = document.querySelectorAll('button.delete');
+        var deleteBtns = prodTable.querySelectorAll('button.delete');
         deleteBtns.forEach(function (btn) {
-            btn.removeEventListener('click', toggleDeleteForm);
-            btn.addEventListener('click', toggleDeleteForm);
+            btn.removeEventListener('click', toggleProdDelete);
+            btn.addEventListener('click', toggleProdDelete);
         });
     });
 }
@@ -136,6 +219,16 @@ function loadRetailTable() {
             td_delete.appendChild(createDeleteButton());
             tr.appendChild(td_delete);
             retailTableBody.appendChild(tr);
+        });
+        var updateBtns = retailTable.querySelectorAll('button.update');
+        updateBtns.forEach(function (btn) {
+            //btn.removeEventListener('click', updateRetailBtn);
+            //btn.addEventListener('click', updateRetailBtn);
+        });
+        var deleteBtns = retailTable.querySelectorAll('button.delete');
+        deleteBtns.forEach(function (btn) {
+            //btn.removeEventListener('click', toggleRetailDelete);
+            //btn.addEventListener('click', toggleRetailDelete);
         });
     });
 }
@@ -183,43 +276,14 @@ function newProdSubmit(event) {
     });
 }
 
-function toggleProductForm(event) {
+function updateProdBtn(event) {
     var tr = this.parentElement.parentElement;
-    showProdDiv();
-    loadProdEditForm(tr.children);
+    productForm.show();
+    productForm.loadData(tr.children);
+    productForm.populateForm();
 }
 
-function loadProdEditForm(tds) {
-    var form = document.getElementById('editProdForm');
-    form.querySelector('#prodId').value = tds[0].innerHTML;
-    form.querySelector('#prodName').value = tds[1].innerHTML;
-    form.querySelector('#prodDept').value = tds[2].innerHTML;
-    form.querySelector('#prodPrice').value = Number(tds[3].innerHTML);
-    form.querySelector('#prodWeight').value = tds[4].innerHTML;
-}
-
-function editProdSubmit(event) {
-    event.stopPropagation();
-    console.log(this);
-    var prodId = this.querySelector('input#prodId').value;
-    var prodName = this.querySelector('input#prodName').value;
-    var prodDept = this.querySelector('input#prodDept').value;
-    var prodPrice = this.querySelector('input#prodPrice').value;
-    var prodWeight = this.querySelector('input#prodWeight').value;
-    var product = {
-        'pID': Number(prodId),
-        'pName': prodName,
-        'pDepartment': prodDept,
-        'pCost': Number(prodPrice),
-        'pWeight': prodWeight
-    };
-    this.reset();
-    editProduct(product, prodId).then(function (data) {
-        console.log(data);
-    });
-}
-
-function toggleDeleteForm(event) {
+function toggleProdDelete(event) {
     var tr = this.parentElement.parentElement;
     var td_list = tr.children;
     var id = td_list[0].innerHTML;
@@ -233,13 +297,6 @@ function toggleDeleteForm(event) {
     }
 }
 
-function showProdDiv() {
-    var editProdDiv = document.getElementById('editProdDiv');
-    if (editProdDiv.style.visibility === 'hidden') {
-        editProdDiv.style.visibility = 'visible';
-    }
-}
-
 function toggleNewRow(event) {
     var newRow = document.getElementById('newProdRetailRow');
     if (newRow.style.display === 'flex') {
@@ -250,7 +307,9 @@ function toggleNewRow(event) {
 }
 
 ready(function () {
-    addListeners();
     loadProductsTable();
     loadRetailTable();
+
+    window.productForm = new ProductForm('editProdDiv', 'editProdForm');
+    addListeners();
 });
