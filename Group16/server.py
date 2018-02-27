@@ -87,22 +87,30 @@ if __name__ == "__main__":
 # Sells routing
 #
 
-@app.route("/transactions/", methods=['GET','POST'])
-def transactions():
+@app.route("/sells/", methods=['GET','POST'])
+def sells():
     if request.method == 'GET':
+<<<<<<< HEAD
         return json.dumps(sellsService.getAllTransactions(), default=json_serial), 200, {'Content-Type': 'application/json; charset=utf-8'}
     else:
         logger.info(request.get_json())
         return json.dumps(sellsServie.addTransaction(request.get_json()), parse_float=decimal.Decimal, default=json_serial), 201
+=======
+        return json.dumps(sellsService.getAllSells()), 200, {'Content-Type': 'application/json; charset=utf-8'}
+    else:
+        logger.info(request.get_json())
+        return json.dumps(sellsService.addSells(request.get_json())), 201
+>>>>>>> b69fe17949178e3597b8a1b28302235742bc520d
 
-@app.route("/transactions/<id>/", methods=['GET','PUT','DELETE'])
+@app.route("/sells/<id>/", methods=['GET','PUT','DELETE'])
 def sellsById(id):
     if request.method == 'GET':
-        return json.dumps(sellsService.getTransactionById(id)), 200, {'Content-Type': 'application"json; charset=utf-8'}
+        return json.dumps(sellsService.getSellsById(id)), 200, {'Content-Type': 'application"json; charset=utf-8'}
     elif request.method == 'PUT':
         logger.info(request.get_json())
-        return json.dumps(sellsService.updateTransactionById(request.get_json(), id)), 200
+        return json.dumps(sellsService.updateSellsById(request.get_json(), id)), 200
     else:
+<<<<<<< HEAD
         return json.dumps(sellsService.deleteTransactionById(id)), 200
 
 def json_serial(obj):
@@ -111,3 +119,6 @@ def json_serial(obj):
     if isinstance(obj, decimal.Decimal):
         return float(obj)
     raise TypeError ("Type %s not serializable", type(obj))
+=======
+        return json.dumps(sellsService.deleteSellsById(id)), 200
+>>>>>>> b69fe17949178e3597b8a1b28302235742bc520d
