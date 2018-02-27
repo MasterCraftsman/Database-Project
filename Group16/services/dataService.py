@@ -155,10 +155,10 @@ class SellsService:
             if (isinstance(jsonObj, dict)):
                 db = database.Database()
                 q = """
-                    INSERT INTO Sells (Sales_Price, Date, Qty, Retail_Locations_rID, Products_pID, transactionID)
-                    VALUES(%s, %s, %s, %s, %s, %s)
+                    INSERT INTO Sells (Sales_Price, Date, Qty, Retail_Locations_rID, Products_pID)
+                    VALUES(%s, %s, %s, %s, %s)
                 """
-                params = [jsonObj['Sales_Price'], jsonObj['Date'], jsonObj['Qty'], jsonObj['Retail_Locations_rID'], jsonObj['Products_pID'], jsonObj['transactionID']]
+                params = [jsonObj['Sales_Price'], jsonObj['Date'], jsonObj['Qty'], jsonObj['Retail_Locations_rID'], jsonObj['Products_pID']]
                 result = db.queryDB(q, params, True)
                 return result
             else:
@@ -173,11 +173,11 @@ class SellsService:
                 db = database.Database()
                 q = """
                     UPDATE Sells
-                    SET Sales_Price = %s, Date = %s, Qty = %s, Retail_Locations_rID = %s, Products_pID = %s, # Im pretty sure that we dont need to update the ID ever
+                    SET Sales_Price = %s, Date = %s, Qty = %s, Retail_Locations_rID = %s, Products_pID = %s
                     WHERE transactionID = %s
                 """
                 params = [jsonObj['Sales_Price'], jsonObj['Date'], jsonObj['Qty'], jsonObj['Retail_Locations_rID'],
-                          jsonObj['Products_pID'], jsonObj['transactionID']]
+                          jsonObj['Products_pID'],jsonObj['transactionID']]
                 result = db.queryDB(q, params, True)
                 return result
             else:
