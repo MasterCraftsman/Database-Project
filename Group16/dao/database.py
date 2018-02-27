@@ -38,7 +38,7 @@ class Database:
                     if (update):
                         # commit changes on update
                         conn.commit()
-                        result = "success"
+                        result = "success" # return json Obj here to get fancy
                     else:
                         result = curs.fetchall()
                     logger.info(result)
