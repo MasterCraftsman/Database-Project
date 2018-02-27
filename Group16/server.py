@@ -2,7 +2,10 @@ from flask import Flask, render_template, request, send_from_directory
 from Group16.dao import database
 from Group16.config import config
 from Group16.services import dataService
-import simplejson as json
+#import simplejson as json
+import json
+import decimal
+from datetime import date, datetime
 import logging
 
 app = Flask(__name__)
@@ -87,10 +90,10 @@ if __name__ == "__main__":
 @app.route("/transactions/", methods=['GET','POST'])
 def transactions():
     if request.method == 'GET':
-        return json.dumps(sellsService.getAllTransactions()), 200, {'Content-Type': 'application/json; charset=utf-8'}
+        return json.dumps(sellsService.getAllTransactions(), default=json_serial), 200, {'Content-Type': 'application/json; charset=utf-8'}
     else:
         logger.info(request.get_json())
-        return json.dumps(sellsServie.addTransaction(request.get_json())), 201
+        return json.dumps(sellsServie.addTransaction(request.get_json()), parse_float=decimal.Decimal, default=json_serial), 201
 
 @app.route("/transactions/<id>/", methods=['GET','PUT','DELETE'])
 def sellsById(id):
@@ -101,3 +104,10 @@ def sellsById(id):
         return json.dumps(sellsService.updateTransactionById(request.get_json(), id)), 200
     else:
         return json.dumps(sellsService.deleteTransactionById(id)), 200
+
+def json_serial(obj):
+    if isinstance(obj, (datetime, date)):
+        return obj.isoformat()
+    if isinstance(obj, decimal.Decimal):
+        return float(obj)
+    raise TypeError ("Type %s not serializable", type(obj))

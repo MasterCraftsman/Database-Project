@@ -45,8 +45,10 @@ function ajax(method, url, body) {
 function addListeners() {
     document.getElementById('newProdForm').addEventListener('submit', newProdSubmit);
     document.getElementById('newProdRetailBtn').addEventListener('click', toggleNewRow);
-    document.getElementById('editProdForm').addEventListener('submit', productForm.submit);
-    document.getElementById('editProdForm').addEventListener('reset', productForm.reset);
+    document.getElementById('editProdForm').addEventListener('submit', editProductForm.submit);
+    document.getElementById('editProdForm').addEventListener('reset', editProductForm.reset);
+    document.getElementById('editRetailForm').addEventListener('submit', editRetailForm.submit);
+    document.getElementById('editRetailForm').addEventListener('reset', editRetailForm.reset);
 }
 
 function getAllProducts() {
@@ -84,12 +86,46 @@ function getAllRetailLocations() {
         });
 }
 
-class ProductForm {
+function addLocation(loc) {
+
+}
+
+function editLocation(loc, id) {
+    return ajax('PUT', 'http://' + window.location.host + '/retail/' + id, loc)
+        .catch(function (err) {
+            console.error(err);
+        });
+}
+
+class EditForm {
     constructor(div_container, form_id) {
         this.div_container = document.getElementById(div_container);
         this.form_id = form_id;
         this.form = document.getElementById(form_id);
     }
+
+    show() {
+        var row = document.querySelector('#editRow');
+        if (row.style.display === 'none') {
+            row.style.display = 'flex';
+        }
+        if (this.div_container.style.visibility === 'hidden') {
+            this.div_container.style.visibility = 'visible';
+        }
+    }
+
+    hide() {
+        var row = document.querySelector('#editRow');
+        if (row.style.display === 'flex') {
+            row.style.display = 'none';
+        }
+        if (this.div_container.style.visibility === 'visible') {
+            this.div_container.style.visibility = 'hidden';
+        }
+    }
+}
+
+class EditProductForm extends EditForm {
 
     set product(product) {
         this._product = product;
@@ -97,18 +133,6 @@ class ProductForm {
 
     get product() {
         return this._product;
-    }
-
-    show() {
-        if (this.div_container.style.visibility === 'hidden') {
-            this.div_container.style.visibility = 'visible';
-        }
-    }
-
-    hide() {
-        if (this.div_container.style.visibility === 'visible') {
-            this.div_container.style.visibility = 'hidden';
-        }
     }
 
     loadData(tds) {
@@ -148,10 +172,10 @@ class ProductForm {
     submit() {
         event.preventDefault();
         event.stopPropagation();
-        productForm.updateProduct();
-        var prod = productForm.product;
-        productForm.form.reset();
-        productForm.hide();
+        editProductForm.updateProduct();
+        var prod = editProductForm.product;
+        editProductForm.form.reset();
+        editProductForm.hide();
         editProduct(prod, prod.pID).then(function (data) {
             console.log(data);
             loadProductsTable();
@@ -159,7 +183,72 @@ class ProductForm {
     }
 
     reset() {
-        productForm.hide();
+        editProductForm.hide();
+    }
+}
+
+class EditRetailForm extends EditForm {
+
+    set location(location) {
+        this._location = location;
+    }
+
+    get location() {
+        return this._location;
+    }
+
+    loadData(tds) {
+        var location = {
+            'rID': tds[0].innerHTML,
+            'rName': tds[1].innerHTML,
+            'rStreet': tds[2].innerHTML,
+            'rCity': tds[3].innerHTML,
+            'rState': tds[4].innerHTML,
+            'rZip': Number(tds[5].innerHTML)
+        };
+        this.location = location;
+    }
+
+    populateForm() {
+        if (this.location) {
+            this.form.querySelector('#retailId').value = this.location.rID;
+            this.form.querySelector('#retailName').value = this.location.rName;
+            this.form.querySelector('#retailStreet').value = this.location.rStreet;
+            this.form.querySelector('#retailCity').value = this.location.rCity;
+            this.form.querySelector('#retailState').value = this.location.rState;
+            this.form.querySelector('#retailZip').value = Number(this.location.rZip);
+        } else {
+            alert('No location selected!');
+        }
+    }
+
+    updateLocation() {
+        var location = {
+            'rID': this.form.querySelector('#retailId').value,
+            'rName': this.form.querySelector('#retailName').value,
+            'rStreet': this.form.querySelector('#retailStreet').value,
+            'rCity': this.form.querySelector('#retailCity').value,
+            'rState': this.form.querySelector('#retailState').value,
+            'rZip': Number(this.form.querySelector('#retailZip').value)
+        };
+        this.location = location;
+    }
+
+    submit() {
+        event.stopPropagation();
+        event.preventDefault();
+        editRetailForm.updateLocation();
+        var loc = editRetailForm.location;
+        editRetailForm.form.reset();
+        editRetailForm.hide();
+        editLocation(loc, loc.rID).then(function (data) {
+            console.log(data);
+            loadRetailTable();
+        });
+    }
+
+    reset() {
+        editRetailForm.hide();
     }
 }
 
@@ -202,6 +291,9 @@ function loadProductsTable() {
 function loadRetailTable() {
     var retailTable = document.getElementById('retail_table');
     var retailTableBody = retailTable.querySelector('tbody');
+    while (retailTableBody.firstChild) {
+        retailTableBody.removeChild(retailTableBody.firstChild);
+    }
     getAllRetailLocations().then(function (data) {
         locations = JSON.parse(data);
         locations.forEach(function (loc) {
@@ -222,8 +314,8 @@ function loadRetailTable() {
         });
         var updateBtns = retailTable.querySelectorAll('button.update');
         updateBtns.forEach(function (btn) {
-            //btn.removeEventListener('click', updateRetailBtn);
-            //btn.addEventListener('click', updateRetailBtn);
+            btn.removeEventListener('click', updateRetailBtn);
+            btn.addEventListener('click', updateRetailBtn);
         });
         var deleteBtns = retailTable.querySelectorAll('button.delete');
         deleteBtns.forEach(function (btn) {
@@ -278,9 +370,16 @@ function newProdSubmit(event) {
 
 function updateProdBtn(event) {
     var tr = this.parentElement.parentElement;
-    productForm.show();
-    productForm.loadData(tr.children);
-    productForm.populateForm();
+    editProductForm.show();
+    editProductForm.loadData(tr.children);
+    editProductForm.populateForm();
+}
+
+function updateRetailBtn(event) {
+    var tr = this.parentElement.parentElement;
+    editRetailForm.show();
+    editRetailForm.loadData(tr.children);
+    editRetailForm.populateForm();
 }
 
 function toggleProdDelete(event) {
@@ -310,6 +409,7 @@ ready(function () {
     loadProductsTable();
     loadRetailTable();
 
-    window.productForm = new ProductForm('editProdDiv', 'editProdForm');
+    window.editProductForm = new EditProductForm('editProdDiv', 'editProdForm');
+    window.editRetailForm = new EditRetailForm('editRetailDiv', 'editRetailForm');
     addListeners();
 });
