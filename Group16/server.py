@@ -90,17 +90,14 @@ if __name__ == "__main__":
 @app.route("/sells/", methods=['GET','POST'])
 def sells():
     if request.method == 'GET':
-<<<<<<< HEAD
         return json.dumps(sellsService.getAllTransactions(), default=json_serial), 200, {'Content-Type': 'application/json; charset=utf-8'}
     else:
         logger.info(request.get_json())
-        return json.dumps(sellsServie.addTransaction(request.get_json()), parse_float=decimal.Decimal, default=json_serial), 201
-=======
+        return json.dumps(sellsServie.addTransaction(request.get_json()), default=json_serial), 201
         return json.dumps(sellsService.getAllSells()), 200, {'Content-Type': 'application/json; charset=utf-8'}
     else:
         logger.info(request.get_json())
         return json.dumps(sellsService.addSells(request.get_json())), 201
->>>>>>> b69fe17949178e3597b8a1b28302235742bc520d
 
 @app.route("/sells/<id>/", methods=['GET','PUT','DELETE'])
 def sellsById(id):
@@ -110,7 +107,6 @@ def sellsById(id):
         logger.info(request.get_json())
         return json.dumps(sellsService.updateSellsById(request.get_json(), id)), 200
     else:
-<<<<<<< HEAD
         return json.dumps(sellsService.deleteTransactionById(id)), 200
 
 def json_serial(obj):
@@ -119,6 +115,4 @@ def json_serial(obj):
     if isinstance(obj, decimal.Decimal):
         return float(obj)
     raise TypeError ("Type %s not serializable", type(obj))
-=======
         return json.dumps(sellsService.deleteSellsById(id)), 200
->>>>>>> b69fe17949178e3597b8a1b28302235742bc520d
