@@ -22,7 +22,7 @@ function ajax(method, url, body) {
         }
 
         req.onload = function () {
-            if (Number(req.status) === 200) {
+            if (Number(req.status) === 200 || Number(req.status) === 201) {
                 var res = req.response || req.responseText;
                 resolve(res);
             } else {
@@ -43,8 +43,12 @@ function ajax(method, url, body) {
 }
 
 function addListeners() {
-    document.getElementById('newProdForm').addEventListener('submit', newProdSubmit);
-    document.getElementById('newProdRetailBtn').addEventListener('click', toggleNewRow);
+    document.getElementById('newProdForm').addEventListener('submit', newProductForm.submit);
+    document.getElementById('newProdForm').addEventListener('reset', newProductForm.reset);
+    document.getElementById('newProdBtn').addEventListener('click', newProdBtn);
+    document.getElementById('newRetailForm').addEventListener('submit', newRetailForm.submit);
+    document.getElementById('newRetailForm').addEventListener('reset', newRetailForm.reset);
+    document.getElementById('newRetailBtn').addEventListener('click', newRetailBtn);
     document.getElementById('editProdForm').addEventListener('submit', editProductForm.submit);
     document.getElementById('editProdForm').addEventListener('reset', editProductForm.reset);
     document.getElementById('editRetailForm').addEventListener('submit', editRetailForm.submit);
@@ -53,6 +57,13 @@ function addListeners() {
 
 function getAllProducts() {
     return ajax('GET', 'http://' + window.location.host + '/products/')
+        .catch(function (err) {
+            console.error(err);
+        });
+}
+
+function getProductById(id) {
+    return ajax('GET', 'http://' + window.location.host + '/products/' + id)
         .catch(function (err) {
             console.error(err);
         });
@@ -86,8 +97,18 @@ function getAllRetailLocations() {
         });
 }
 
-function addLocation(loc) {
+function getLocationById(id) {
+    return ajax('GET', 'http://' + window.location.host + '/retail/' + id)
+        .catch(function (err) {
+            console.error(err);
+        });
+}
 
+function addLocation(loc) {
+    return ajax('POST', 'http://' + window.location.host + '/retail/', loc)
+        .catch(function (err) {
+            console.error(err);
+        });
 }
 
 function editLocation(loc, id) {
@@ -95,6 +116,126 @@ function editLocation(loc, id) {
         .catch(function (err) {
             console.error(err);
         });
+}
+
+function deleteLocation(id) {
+    return ajax('DELETE', 'http://' + window.location.host + '/retail/' + id)
+        .catch(function (err) {
+            console.error(err);
+        });
+}
+
+function getAllSales() {
+    return ajax('GET', 'http://' + window.location.host + '/sells/')
+        .catch(function (err) {
+            console.error(err);
+        });
+}
+
+class NewForm {
+    constructor(div_container, form_id) {
+        this.div_container = document.getElementById(div_container);
+        this.form_id = form_id;
+        this.form = document.getElementById(form_id);
+    }
+
+    show() {
+        var row = document.querySelector('#newRow');
+        if (row.style.display === 'none') {
+            row.style.display = 'flex';
+        }
+        if (this.div_container.style.visibility === 'hidden') {
+            this.div_container.style.visibility = 'visible';
+        }
+    }
+
+    hide() {
+        var row = document.querySelector('#newRow');
+        if (row.style.display === 'flex') {
+            row.style.display = 'none';
+        }
+        if (this.div_container.style.visibility === 'visible') {
+            this.div_container.style.visibility = 'hidden';
+        }
+    }
+}
+
+class NewProductForm extends NewForm {
+    set product(product) {
+        this._product = product;
+    }
+
+    get product() {
+        return this._product;
+    }
+
+    updateProduct() {
+        var product = {
+            //'pID': this.form.querySelector('#prodId').value,
+            'pName': this.form.querySelector('#prodName').value,
+            'pDepartment': this.form.querySelector('#prodDept').value,
+            'pCost': Number(this.form.querySelector('#prodCost').value),
+            'pWeight': this.form.querySelector('#prodWeight').value
+        };
+        this.product = product;
+    }
+
+    submit() {
+        event.preventDefault();
+        event.stopPropagation();
+        newProductForm.updateProduct();
+        var prod = newProductForm.product;
+        newProductForm.form.reset();
+        newProductForm.hide();
+        addProduct(prod).then(function (data) {
+            console.log(data);
+            loadProductsTable();
+        });
+    }
+
+    reset() {
+        newProductForm.hide();
+    }
+}
+
+class NewRetailForm extends NewForm {
+    set location(location) {
+        this._location = location;
+    }
+
+    get location() {
+        return this._location;
+    }
+
+    updateLocation() {
+        var location = {
+            //'rID': this.form.querySelector('#retailId').value,
+            'rName': this.form.querySelector('#retailName').value,
+            'rStreet': this.form.querySelector('#retailStreet').value,
+            'rCity': this.form.querySelector('#retailCity').value,
+            'rState': this.form.querySelector('#retailState').value,
+            'rZip': Number(this.form.querySelector('#retailZip').value)
+        };
+        this.location = location;
+    }
+
+    submit() {
+        event.preventDefault();
+        event.stopPropagation();
+        newRetailForm.updateLocation();
+        var loc = newRetailForm.location;
+        console.log(loc);
+        newProductForm.form.reset();
+        newProductForm.hide();
+        addLocation(loc).then(function (data) {
+            console.log(data);
+            loadRetailTable();
+        });
+    }
+
+    reset() {
+        newRetailForm.hide();
+    }
 }
 
 class EditForm {
@@ -319,10 +460,76 @@ function loadRetailTable() {
         });
         var deleteBtns = retailTable.querySelectorAll('button.delete');
         deleteBtns.forEach(function (btn) {
-            //btn.removeEventListener('click', toggleRetailDelete);
-            //btn.addEventListener('click', toggleRetailDelete);
+            btn.removeEventListener('click', toggleRetailDelete);
+            btn.addEventListener('click', toggleRetailDelete);
         });
     });
+}
+
+function loadSalesTable() {
+    var salesTable = document.getElementById('sales_table');
+    var salesTableBody = salesTable.querySelector('tbody');
+    while (salesTableBody.firstChild) {
+        salesTableBody.removeChild(salesTableBody.firstChild);
+    }
+    var prods, locs;
+    // uggggghhhhh
+        getAllProducts().then(function (data) {
+            prods = JSON.parse(data);
+            getAllRetailLocations().then(function (data) {
+                locs = JSON.parse(data);
+                getAllSales().then(function (data) {
+                    sales = JSON.parse(data);
+                    sales.forEach(function (sale) {
+                        var tr = document.createElement('tr');
+                        tr.appendChild(createTd(sale.transactionID));
+                        if (prods) {
+                            var p = prods.find(function (el) {
+                                return Number(el.pID) === Number(sale.Products_pID);
+                            });
+                            tr.appendChild(createTd(p.pName));
+                        } else {
+                            tr.appendChild(createTd(sale.Products_pID));
+                        }
+                        if (locs) {
+                            var l = locs.find(function (el) {
+                                return Number(el.rID) === Number(sale.Retail_Locations_rID);
+                            });
+                            tr.appendChild(createTd(l.rName));
+                        } else {
+                            tr.appendChild(createTd(sale.Retail_Locations_rID));
+                        }
+                        tr.appendChild(createTd(sale.Sales_Price));
+                        tr.appendChild(createTd(sale.Qty));
+                        var d = new Date(sale.Date);
+                        tr.appendChild(createTd(d.toLocaleDateString()));
+                        salesTableBody.appendChild(tr);
+                    });
+                });
+            });
+        });
+/*    getAllSales().then(function (data) {
+        sales = JSON.parse(data);
+        var prod, loc;
+        sales.forEach(function (sale) {
+            getProductById(sale.Products_pID).then(function (data) {
+                prod = JSON.parse(data);
+                getLocationById(sale.Retail_Locations_rID).then(function (data) {
+                    loc = JSON.parse(data);
+                    var tr = document.createElement('tr');
+                    tr.appendChild(createTd(sale.transactionID));
+                    tr.appendChild(createTd(prod[0].pName));
+                    tr.appendChild(createTd(loc[0].rName));
+                    tr.appendChild(createTd(sale.Sales_Price));
+                    tr.appendChild(createTd(sale.Qty));
+                    var d = new Date(sale.Date);
+                    tr.appendChild(createTd(d.toLocaleDateString()));
+                    salesTableBody.appendChild(tr);
+                });
+            });
+
+        });
+    });*/
 }
 
 function createTd(inner_text) {
@@ -351,21 +558,12 @@ function createDeleteButton() {
     return button;
 }
 
-function newProdSubmit(event) {
-    event.stopPropagation();
-    var prodName = this.querySelector('input#prodName').value;
-    var prodDept = this.querySelector('input#prodDept').value;
-    var prodPrice = this.querySelector('input#prodPrice').value;
-    var prodWeight = this.querySelector('input#prodWeight').value;
-    var product = {
-        'pName': prodName,
-        'pDepartment': prodDept,
-        'pCost': prodPrice,
-        'pWeight': prodWeight
-    };
-    addProduct(product).then(function (data) {
-        console.log(data);
-    });
+function newProdBtn() {
+    newProductForm.show();
+}
+
+function newRetailBtn() {
+    newRetailForm.show();
 }
 
 function updateProdBtn(event) {
@@ -391,25 +589,34 @@ function toggleProdDelete(event) {
     if (confirm(message)) {
         deleteProduct(id).then(function (data) {
             console.log(data);
-            location.reload();
+            //location.reload();
+            loadProductsTable();
         });
     }
 }
 
-function toggleNewRow(event) {
-    var newRow = document.getElementById('newProdRetailRow');
-    if (newRow.style.display === 'flex') {
-        newRow.style.display = 'none';
-    } else {
-        newRow.style.display = 'flex';
+function toggleRetailDelete(event) {
+    var tr = this.parentElement.parentElement;
+    var td_list = tr.children;
+    var id = td_list[0].innerHTML;
+    var name = td_list[1].innerHTML;
+    var message = 'Are you sure you want to delete ' + name + '?';
+    if (confirm(message)) {
+        deleteLocation(id).then(function (data) {
+            console.log(data);
+            loadRetailTable();
+        });
     }
 }
 
 ready(function () {
     loadProductsTable();
     loadRetailTable();
+    loadSalesTable();
 
     window.editProductForm = new EditProductForm('editProdDiv', 'editProdForm');
     window.editRetailForm = new EditRetailForm('editRetailDiv', 'editRetailForm');
+    window.newProductForm = new NewProductForm('newProdDiv', 'newProdForm');
+    window.newRetailForm = new NewRetailForm('newRetailDiv', 'newRetailForm');
     addListeners();
 });

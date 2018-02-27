@@ -28,6 +28,7 @@
                         </tbody>
                     </table>
                 </div>
+                <button id="newProdBtn" class="btn btn-primary">Add New Product</button>
             </div>
             <div class="col">
                 <h2>Retail Locations</h2>
@@ -47,13 +48,11 @@
                         </tbody>
                     </table>
                 </div>
+                <button id="newRetailBtn" class="btn btn-primary">Add New Retail Location</button>
             </div>
         </div>
-        <div class="row">
-            <button id="newProdRetailBtn" class="btn btn-primary">Add new Product or Retail Location</button>
-        </div>
-        <div id="newProdRetailRow" class="row" style="display: none;">
-            <div class="col">
+        <div id="newRow" class="row" style="display: none;">
+            <div id="newProdDiv" class="col" style="visibility: hidden;">
                 <h2>New Product</h2>
                 <form id="newProdForm">
                     <div class="form-group">
@@ -65,40 +64,42 @@
                         <input id="prodDept" type="text" autocomplete="off" class="form-control" required>
                     </div>
                     <div class="form-group">
-                        <label for="prodPrice">Product Price</label>
-                        <input id="prodPrice" type="number" autocomplete="off" class="form-control" step="0.01" min="0" required>
+                        <label for="prodCost">Product Cost</label>
+                        <input id="prodCost" type="number" autocomplete="off" class="form-control" step="0.01" min="0" required>
                     </div>
                     <div class="form-group">
                         <label for="prodWeight">Product Weight</label>
                         <input id="prodWeight" type="text" autocomplete="off" class="form-control" required>
                     </div>
-                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>&nbsp;
+                    <button type="reset" class="btn btn-danger">Cancel</button>
                 </form>
             </div>
-            <div class="col">
+            <div id="newRetailDiv" class="col" style="visibility: hidden;">
                 <h2>New Retail Location</h2>
                 <form id="newRetailForm">
                     <div class="form-group">
                         <label for="retailName">Location Name</label>
-                        <input id="retailName" type="text" autocomplete="off" class="form-control">
+                        <input id="retailName" type="text" autocomplete="off" class="form-control" required>
                     </div>
                     <div class="form-group">
                         <label for="retailStreet">Street</label>
-                        <input id="retailStreet" type="text" autocomplete="off" class="form-control">
+                        <input id="retailStreet" type="text" autocomplete="off" class="form-control" required>
                     </div>
                     <div class="form-group">
                         <label for="retailCity">City</label>
-                        <input id="retailCity" type="number" autocomplete="off" class="form-control">
+                        <input id="retailCity" type="text" autocomplete="off" class="form-control" required>
                     </div>
                     <div class="form-group">
                         <label for="retailState">State</label>
-                        <input id="retailState" type="text" autocomplete="off" class="form-control">
+                        <input id="retailState" type="text" autocomplete="off" class="form-control" required>
                     </div>
                     <div class="form-group">
                         <label for="retailZip">Zip</label>
-                        <input id="retailZip" type="number" autocomplete="off" class="form-control">
+                        <input id="retailZip" type="number" autocomplete="off" class="form-control" required>
                     </div>
-                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>&nbsp;
+                    <button type="reset" class="btn btn-danger">Cancel</button>
                 </form>
             </div>
         </div>
@@ -156,6 +157,28 @@
                     </div>
                     <button type="submit" class="btn btn-primary">Submit</button>&nbsp;<button type="reset" class="btn btn-danger">Cancel</button>
                 </form>
+            </div>
+        </div>
+        <div id="salesRow" class="row">
+            <div class="col">
+                <h2>Sales</h2>
+                <div class="table-container">
+                    <table id="sales_table" class="table table-sm">
+                        <thead>
+                            <th scope="col">ID</th>
+                            <th scope="col">Product</th>
+                            <th scope="col">Location</th>
+                            <th scope="col">Sales Price</th>
+                            <th scope="col">Quantity</th>
+                            <th scope="col">Date</th>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <button id="newSaleBtn" class="btn btn-primary">Record a New Sale</button>
+            </div>
+            <div class="col">
             </div>
         </div>
     </div>
