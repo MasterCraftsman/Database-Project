@@ -15,22 +15,23 @@ A **config.py** file is needed to store all configurations for **server.py**.  A
 
 ## Running
 
-To run the project, first a pipenv should be activated in the root directory.  Then an environment variable FLASK_APP needs to be assigned to **server.py**.  To help automate this process, a script can be created.  The server will then be set to 'http://localhost:5000' or 'http://127.0.0.1:5000'.
+To run the project, first a pipenv should be activated in the root directory.  Then an environment variable FLASK_APP needs to be assigned to **server.py**.  To help automate this process, a script can be created.  The server will then be set to `http://localhost:5000` or `http://127.0.0.1:5000`.
 
 ### Mac
 
 **init.sh** has been created to script this process.  Running this from the command line should begin the server.  If not, you can also start the server by:
-* From root project folder type 'EXPORT FLASK_APP=./Group16/server.py'
-* If this is the first time running the server, you may need to type 'pipenv install' to install all dependencies
-* Then type 'pipenv run flask run'
+* From root project folder type `EXPORT FLASK_APP=./Group16/server.py`
+* If this is the first time running the server, you may need to type `pipenv install` to install all dependencies
+* Then type `pipenv run flask run`
 
 ### Windows
 
 After installing Python3 and Pipenv perform the following to start the server:
-* From root project folder type 'SET FLASK_APP=./Group16/server.py'
-* If this is the first time running the server, you may need to type 'pipenv install' to install all dependencies
-* Then type 'pipenv run flask run'
+* From root project folder type `SET FLASK_APP=./Group16/server.py`
+* If this is the first time running the server, you may need to type `pipenv install` to install all dependencies
+* Then type `pipenv run flask run`
+
 Alternatively, sometimes the command prompt won't retain the FLASK_APP environment variable. To get around this:
-* From root folder, type 'pipenv shell' to enter the virtual environment shell
-* Type 'SET FLASK_APP=./Group16/server.py'
-* Type 'flask run'
+* From root folder, type `pipenv shell` to enter the virtual environment shell
+* Type `SET FLASK_APP=./Group16/server.py`
+* Type `flask run`
