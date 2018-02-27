@@ -135,21 +135,21 @@ class SellsService:
         def __init__(self):
             pass
 
-        def getAllTransactions(self):
+        def getAllSells(self):
             logger.info('Getting all transactions')
             db = database.Database()
             q = """SELECT * FROM Sells"""
             result = db.queryDB(q)
             return result
 
-        def getTransactionById(self,id):
+        def getSellsById(self,id):
             logger.info('Getting Transaction by id: %s', id)
             db = database.Database()
             q = """SELECT * FROM Sells WHERE transactionID=%s"""
             result = db.queryDB(q, [id])
             return result
 
-        def addTransaction(self, jsonObj):
+        def addSells(self, jsonObj):
             logger.info('%s', jsonObj)
             logger.info('This is a %s', type(jsonObj))
             if (isinstance(jsonObj, dict)):
@@ -164,7 +164,7 @@ class SellsService:
             else:
                 return "Please send a JSON object"
 
-        def updateTransactionById(self, jsonObj, id):
+        def updateSellsById(self, jsonObj, id):
             logger.info('%s', jsonObj)
             logger.info('%s', id)
             if (isinstance(jsonObj, dict)):
@@ -183,7 +183,7 @@ class SellsService:
             else:
                 return "Please send a JSON object"
 
-        def deleteTransactionById(self, id):
+        def deleteSellsById(self, id):
             logger.info('Deleting transaction with id: %s', id)
             db = database.Database()
             q = """DELETE FROM Sells WHERE transactionID=%s"""

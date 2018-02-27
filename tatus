@@ -1,0 +1,72 @@
+[33mcommit 3b03fbf4606ff3bc7f4cda341b5ff631da2315d8[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: Adam Kijowski <akijowski@Adams-Mac-mini.local>
+Date:   Sat Feb 24 17:04:29 2018 -0700
+
+    Add Update and Delete for Products
+
+[33mcommit 762fbb3dfaafb15d56436f122669e5dc89f4fd2a[m
+Author: Adam Kijowski <akijowski@Adams-Mac-mini.local>
+Date:   Sat Feb 24 13:09:41 2018 -0700
+
+    Refactor Products routes.  Add new form to index.html
+
+[33mcommit 57613f7bace627135f11f272c2b5275f864a5467[m
+Author: Adam Kijowski <akijowski@Adams-Mac-mini.local>
+Date:   Fri Feb 23 17:23:58 2018 -0700
+
+    Update to Readme
+
+[33mcommit bf03e251f5f6debb0e8acb77e167b6182b72405d[m
+Author: Adam Kijowski <akijowski@Adams-Mac-mini.local>
+Date:   Fri Feb 23 16:51:57 2018 -0700
+
+    Add basic Bootstrap to index.html
+
+[33mcommit 6f8ce5f478b74371a6942793bee494be076eb4b5[m
+Author: Adam Kijowski <akijowski@Adams-Mac-mini.local>
+Date:   Fri Feb 23 15:19:50 2018 -0700
+
+    Add basic CRUD ops for Retail Locations table
+
+[33mcommit fcba0d44054923d7d4259caf85edf22a9bc56a82[m
+Author: Adam Kijowski <akijowski@Adams-Mac-mini.local>
+Date:   Thu Feb 22 21:34:58 2018 -0700
+
+    Add basic CRUD ops for Product table
+
+[33mcommit 126f69821848ad658b20cf0c7c14064fcc36d0d1[m
+Author: Adam Kijowski <akijowski@Adams-Mac-mini.local>
+Date:   Wed Feb 21 19:15:12 2018 -0700
+
+    Add dataService module and ProductService class
+
+[33mcommit ed20532e8d7fb1b72279a49e500f65bee66999c2[m
+Author: Adam Kijowski <akijowski@Adams-Mac-mini.local>
+Date:   Wed Feb 21 18:12:16 2018 -0700
+
+    Update to README and add example config
+
+[33mcommit 15759cfc837062276ccb84998d1e598a609f01d4[m
+Author: Adam Kijowski <akijowski@Adams-Mac-mini.local>
+Date:   Tue Feb 20 19:58:34 2018 -0700
+
+    Add simple DB module and logging
+
+[33mcommit c6a85c566afce63392a5d516940fed2da5811767[m
+Merge: 10edca3 196e005
+Author: Adam Kijowski <akijowski@Adams-Mac-mini.local>
+Date:   Mon Feb 19 17:42:38 2018 -0700
+
+    Merge branch 'master' of https://github.com/MasterCraftsman/Database-Project
+
+[33mcommit 10edca3a1ce8345602490e56568f56c77f891fca[m
+Author: Adam Kijowski <akijowski@Adams-Mac-mini.local>
+Date:   Mon Feb 19 17:11:30 2018 -0700
+
+    Init commit.  Add base Flask app
+
+[33mcommit 196e0058c58bb586c095be4ec8b060fab45d297b[m
+Author: MasterCraftsman <tylerw_carr@yahoo.com>
+Date:   Sun Feb 18 18:55:36 2018 -0700
+
+    Initial commit

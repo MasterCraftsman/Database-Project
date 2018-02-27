@@ -84,20 +84,20 @@ if __name__ == "__main__":
 # Sells routing
 #
 
-@app.route("/transactions/", methods=['GET','POST'])
-def transactions():
+@app.route("/sells/", methods=['GET','POST'])
+def sells():
     if request.method == 'GET':
-        return json.dumps(sellsService.getAllTransactions()), 200, {'Content-Type': 'application/json; charset=utf-8'}
+        return json.dumps(sellsService.getAllSells()), 200, {'Content-Type': 'application/json; charset=utf-8'}
     else:
         logger.info(request.get_json())
-        return json.dumps(sellsServie.addTransaction(request.get_json())), 201
+        return json.dumps(sellsService.addSells(request.get_json())), 201
 
-@app.route("/transactions/<id>/", methods=['GET','PUT','DELETE'])
+@app.route("/sells/<id>/", methods=['GET','PUT','DELETE'])
 def sellsById(id):
     if request.method == 'GET':
-        return json.dumps(sellsService.getTransactionById(id)), 200, {'Content-Type': 'application"json; charset=utf-8'}
+        return json.dumps(sellsService.getSellsById(id)), 200, {'Content-Type': 'application"json; charset=utf-8'}
     elif request.method == 'PUT':
         logger.info(request.get_json())
-        return json.dumps(sellsService.updateTransactionById(request.get_json(), id)), 200
+        return json.dumps(sellsService.updateSellsById(request.get_json(), id)), 200
     else:
-        return json.dumps(sellsService.deleteTransactionById(id)), 200
+        return json.dumps(sellsService.deleteSellsById(id)), 200
