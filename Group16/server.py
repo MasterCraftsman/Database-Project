@@ -90,10 +90,6 @@ if __name__ == "__main__":
 @app.route("/sells/", methods=['GET','POST'])
 def sells():
     if request.method == 'GET':
-        return json.dumps(sellsService.getAllTransactions(), default=json_serial), 200, {'Content-Type': 'application/json; charset=utf-8'}
-    else:
-        logger.info(request.get_json())
-        return json.dumps(sellsServie.addTransaction(request.get_json()), default=json_serial), 201
         return json.dumps(sellsService.getAllSells()), 200, {'Content-Type': 'application/json; charset=utf-8'}
     else:
         logger.info(request.get_json())
@@ -107,7 +103,7 @@ def sellsById(id):
         logger.info(request.get_json())
         return json.dumps(sellsService.updateSellsById(request.get_json(), id)), 200
     else:
-        return json.dumps(sellsService.deleteTransactionById(id)), 200
+        return json.dumps(sellsService.deleteSellsById(id)), 200
 
 def json_serial(obj):
     if isinstance(obj, (datetime, date)):
