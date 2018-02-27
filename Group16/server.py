@@ -42,15 +42,15 @@ def path_proxy(path):
 @app.route("/products/", methods=['GET', 'POST'])
 def product():
     if request.method == 'GET':
-        return json.dumps(productService.getAllProducts()), 200, {'Content-Type': 'application/json; charset=utf-8'}
+        return json.dumps(productService.getAllProducts(),default=json_serial), 200, {'Content-Type': 'application/json; charset=utf-8'}
     else:
         logger.info(request.get_json())
-        return json.dumps(productService.addProduct(request.get_json())), 201
+        return json.dumps(productService.addProduct(request.get_json()),default=json_serial), 201
     
 @app.route("/products/<id>/", methods=['GET', 'PUT', 'DELETE'])
 def productById(id):
     if request.method == 'GET':
-        return json.dumps(productService.getProductById(id)), 200, {'Content-Type': 'application/json; charset=utf-8'}
+        return json.dumps(productService.getProductById(id),default=json_serial), 200, {'Content-Type': 'application/json; charset=utf-8'}
     elif request.method == 'PUT':
         logger.info(request.get_json())
         return productService.updateProductById(request.get_json(), id), 200
@@ -64,20 +64,20 @@ def productById(id):
 @app.route("/retail/", methods=['GET', 'POST'])
 def retail():
     if request.method == 'GET':
-        return json.dumps(retailService.getAllLocations()), 200, {'Content-Type': 'application/json; charset=utf-8'}
+        return json.dumps(retailService.getAllLocations(),default=json_serial), 200, {'Content-Type': 'application/json; charset=utf-8'}
     else:
         logger.info(request.get_json())
-        return json.dumps(retailService.addLocation(request.get_json())), 201
+        return json.dumps(retailService.addLocation(request.get_json()),default=json_serial), 201
 
 @app.route("/retail/<id>/", methods=['GET', 'PUT', 'DELETE'])
 def retailById(id):
     if request.method == 'GET':
-        return json.dumps(retailService.getLocationById(id)), 200, {'Content-Type': 'application:json; charset=utf-8'}
+        return json.dumps(retailService.getLocationById(id),default=json_serial), 200, {'Content-Type': 'application:json; charset=utf-8'}
     elif request.method == 'PUT':
         logger.info(request.get_json())
-        return json.dumps(retailService.updateLocationById(request.get_json(), id)), 200
+        return json.dumps(retailService.updateLocationById(request.get_json(), id),default=json_serial), 200
     else:
-        return json.dumps(retailService.deleteLocationById(id)), 200
+        return json.dumps(retailService.deleteLocationById(id),default=json_serial), 200
 
 #
 # Sells routing
@@ -89,7 +89,7 @@ def sells():
         return json.dumps(sellsService.getAllSells(), default=json_serial), 200, {'Content-Type': 'application/json; charset=utf-8'}
     else:
         logger.info(request.get_json())
-        return json.dumps(sellsService.addSells(request.get_json())), 201
+        return json.dumps(sellsService.addSells(request.get_json()),default=json_serial), 201
 
 @app.route("/sells/<id>/", methods=['GET','PUT','DELETE'])
 def sellsById(id):
@@ -97,9 +97,9 @@ def sellsById(id):
         return json.dumps(sellsService.getSellsById(id), default=json_serial), 200, {'Content-Type': 'application"json; charset=utf-8'}
     elif request.method == 'PUT':
         logger.info(request.get_json())
-        return json.dumps(sellsService.updateSellsById(request.get_json(), id)), 200
+        return json.dumps(sellsService.updateSellsById(request.get_json(), id),default=json_serial), 200
     else:
-        return json.dumps(sellsService.deleteSellsById(id)), 200
+        return json.dumps(sellsService.deleteSellsById(id),default=json_serial), 200
 
 def json_serial(obj):
     if isinstance(obj, (datetime, date)):
