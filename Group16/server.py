@@ -2,7 +2,6 @@ from flask import Flask, render_template, request, send_from_directory
 from Group16.dao import database
 from Group16.config import config
 from Group16.services import dataService
-#import simplejson as json
 import json
 import decimal
 from datetime import date, datetime
@@ -80,9 +79,6 @@ def retailById(id):
     else:
         return json.dumps(retailService.deleteLocationById(id)), 200
 
-if __name__ == "__main__":
-    app.run()
-
 #
 # Sells routing
 #
@@ -90,7 +86,7 @@ if __name__ == "__main__":
 @app.route("/sells/", methods=['GET','POST'])
 def sells():
     if request.method == 'GET':
-        return json.dumps(sellsService.getAllSells()), 200, {'Content-Type': 'application/json; charset=utf-8'}
+        return json.dumps(sellsService.getAllSells(), default=json_serial), 200, {'Content-Type': 'application/json; charset=utf-8'}
     else:
         logger.info(request.get_json())
         return json.dumps(sellsService.addSells(request.get_json())), 201
@@ -98,7 +94,7 @@ def sells():
 @app.route("/sells/<id>/", methods=['GET','PUT','DELETE'])
 def sellsById(id):
     if request.method == 'GET':
-        return json.dumps(sellsService.getSellsById(id)), 200, {'Content-Type': 'application"json; charset=utf-8'}
+        return json.dumps(sellsService.getSellsById(id), default=json_serial), 200, {'Content-Type': 'application"json; charset=utf-8'}
     elif request.method == 'PUT':
         logger.info(request.get_json())
         return json.dumps(sellsService.updateSellsById(request.get_json(), id)), 200
@@ -111,4 +107,6 @@ def json_serial(obj):
     if isinstance(obj, decimal.Decimal):
         return float(obj)
     raise TypeError ("Type %s not serializable", type(obj))
-        return json.dumps(sellsService.deleteSellsById(id)), 200
+    
+if __name__ == "__main__":
+    app.run()

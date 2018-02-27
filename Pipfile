@@ -7,9 +7,8 @@ name = "pypi"
 
 [packages]
 
-flask = "*"
-pymysql = "*"
-simplejson = "*"
+Flask = "*"
+PyMySQL = "*"
 
 
 [dev-packages]
