@@ -49,6 +49,9 @@ function addListeners() {
     document.getElementById('newRetailForm').addEventListener('submit', newRetailForm.submit);
     document.getElementById('newRetailForm').addEventListener('reset', newRetailForm.reset);
     document.getElementById('newRetailBtn').addEventListener('click', newRetailBtn);
+    document.getElementById('newSalesForm').addEventListener('submit', newSalesForm.submit);
+    document.getElementById('newSalesForm').addEventListener('reset', newSalesForm.reset);
+    document.getElementById('newSalesBtn').addEventListener('click', newSalesBtn);
     document.getElementById('editProdForm').addEventListener('submit', editProductForm.submit);
     document.getElementById('editProdForm').addEventListener('reset', editProductForm.reset);
     document.getElementById('editRetailForm').addEventListener('submit', editRetailForm.submit);
@@ -127,6 +130,13 @@ function deleteLocation(id) {
 
 function getAllSales() {
     return ajax('GET', 'http://' + window.location.host + '/sells/')
+        .catch(function (err) {
+            console.error(err);
+        });
+}
+
+function addSale(sale) {
+    return ajax('POST', 'http://' + window.location.host + '/sells/', sale)
         .catch(function (err) {
             console.error(err);
         });
@@ -235,6 +245,75 @@ class NewRetailForm extends NewForm {
 
     reset() {
         newRetailForm.hide();
+    }
+}
+
+class NewSalesForm extends NewForm {
+
+    show() {
+        if (this.div_container.style.visibility === 'hidden') {
+            this.div_container.style.visibility = 'visible';
+        }
+    }
+
+    hide() {
+        if (this.div_container.style.visibility === 'visible') {
+            this.div_container.style.visibility = 'hidden';
+        }
+    }
+
+    get sale() {
+        return this._sale;
+    }
+
+    set sale(sale) {
+        this._sale = sale;
+    }
+
+    loadProductSelector() {
+        getAllProducts().then(function (data) {
+            var products = JSON.parse(data);
+            buildSelector('prodSelector', products);
+        });
+    }
+
+    loadLocationSelector() {
+        getAllRetailLocations().then(function (data) {
+            var locations = JSON.parse(data);
+            buildSelector('locSelector', locations);
+        });
+    }
+
+    updateSale() {
+        var sale = {
+            'Sales_Price': Number(this.form.querySelector('#salesPrice').value),
+            'Qty': Number(this.form.querySelector('#salesQty').value),
+/*            'Date': new Date().toLocaleString('en-US', {
+                hour12: false
+            }),*/
+            'Date': new Date().toISOString(),
+            'Retail_Locations_rID': this.form.querySelector('#locSelector').value,
+            'Products_pID': this.form.querySelector('#prodSelector').value
+        };
+        console.log(sale);
+        this.sale = sale;
+    }
+
+    submit() {
+        event.stopPropagation();
+        event.preventDefault();
+        newSalesForm.updateSale();
+        var sale = newSalesForm.sale;
+        newSalesForm.form.reset();
+        newSalesForm.hide();
+        addSale(sale).then(function(data) {
+           console.log(data);
+            loadSalesTable();
+        });
+    }
+
+    reset() {
+        newSalesForm.hide();
     }
 }
 
@@ -474,52 +553,31 @@ function loadSalesTable() {
     }
     var prods, locs;
     // uggggghhhhh
-        getAllProducts().then(function (data) {
-            prods = JSON.parse(data);
-            getAllRetailLocations().then(function (data) {
-                locs = JSON.parse(data);
-                getAllSales().then(function (data) {
-                    sales = JSON.parse(data);
-                    sales.forEach(function (sale) {
-                        var tr = document.createElement('tr');
-                        tr.appendChild(createTd(sale.transactionID));
-                        if (prods) {
-                            var p = prods.find(function (el) {
-                                return Number(el.pID) === Number(sale.Products_pID);
-                            });
-                            tr.appendChild(createTd(p.pName));
-                        } else {
-                            tr.appendChild(createTd(sale.Products_pID));
-                        }
-                        if (locs) {
-                            var l = locs.find(function (el) {
-                                return Number(el.rID) === Number(sale.Retail_Locations_rID);
-                            });
-                            tr.appendChild(createTd(l.rName));
-                        } else {
-                            tr.appendChild(createTd(sale.Retail_Locations_rID));
-                        }
-                        tr.appendChild(createTd(sale.Sales_Price));
-                        tr.appendChild(createTd(sale.Qty));
-                        var d = new Date(sale.Date);
-                        tr.appendChild(createTd(d.toLocaleDateString()));
-                        salesTableBody.appendChild(tr);
-                    });
-                });
-            });
-        });
-/*    getAllSales().then(function (data) {
-        sales = JSON.parse(data);
-        var prod, loc;
-        sales.forEach(function (sale) {
-            getProductById(sale.Products_pID).then(function (data) {
-                prod = JSON.parse(data);
-                getLocationById(sale.Retail_Locations_rID).then(function (data) {
-                    loc = JSON.parse(data);
+    getAllProducts().then(function (data) {
+        prods = JSON.parse(data);
+        getAllRetailLocations().then(function (data) {
+            locs = JSON.parse(data);
+            getAllSales().then(function (data) {
+                sales = JSON.parse(data);
+                sales.forEach(function (sale) {
                     var tr = document.createElement('tr');
                     tr.appendChild(createTd(sale.transactionID));
-                    tr.appendChild(createTd(prod[0].pName));
-                    tr.appendChild(createTd(loc[0].rName));
+                    if (prods) {
+                        var p = prods.find(function (el) {
+                            return Number(el.pID) === Number(sale.Products_pID);
+                        });
+                        tr.appendChild(createTd(p.pName));
+                    } else {
+                        tr.appendChild(createTd(sale.Products_pID));
+                    }
+                    if (locs) {
+                        var l = locs.find(function (el) {
+                            return Number(el.rID) === Number(sale.Retail_Locations_rID);
+                        });
+                        tr.appendChild(createTd(l.rName));
+                    } else {
+                        tr.appendChild(createTd(sale.Retail_Locations_rID));
+                    }
                     tr.appendChild(createTd(sale.Sales_Price));
                     tr.appendChild(createTd(sale.Qty));
                     var d = new Date(sale.Date);
@@ -527,9 +585,30 @@ function loadSalesTable() {
                     salesTableBody.appendChild(tr);
                 });
             });
-
         });
-    });*/
+    });
+    /*    getAllSales().then(function (data) {
+            sales = JSON.parse(data);
+            var prod, loc;
+            sales.forEach(function (sale) {
+                getProductById(sale.Products_pID).then(function (data) {
+                    prod = JSON.parse(data);
+                    getLocationById(sale.Retail_Locations_rID).then(function (data) {
+                        loc = JSON.parse(data);
+                        var tr = document.createElement('tr');
+                        tr.appendChild(createTd(sale.transactionID));
+                        tr.appendChild(createTd(prod[0].pName));
+                        tr.appendChild(createTd(loc[0].rName));
+                        tr.appendChild(createTd(sale.Sales_Price));
+                        tr.appendChild(createTd(sale.Qty));
+                        var d = new Date(sale.Date);
+                        tr.appendChild(createTd(d.toLocaleDateString()));
+                        salesTableBody.appendChild(tr);
+                    });
+                });
+
+            });
+        });*/
 }
 
 function createTd(inner_text) {
@@ -558,12 +637,30 @@ function createDeleteButton() {
     return button;
 }
 
+function buildSelector(id, objs) {
+    var selector = document.getElementById(id);
+    if (selector) {
+        objs.forEach(function (obj) {
+            var opt = document.createElement('option');
+            var i = obj.rID || obj.pID;
+            var n = obj.rName || obj.pName;
+            opt.value = i;
+            opt.innerHTML = n;
+            selector.appendChild(opt);
+        });
+    }
+}
+
 function newProdBtn() {
     newProductForm.show();
 }
 
 function newRetailBtn() {
     newRetailForm.show();
+}
+
+function newSalesBtn() {
+    newSalesForm.show();
 }
 
 function updateProdBtn(event) {
@@ -618,5 +715,8 @@ ready(function () {
     window.editRetailForm = new EditRetailForm('editRetailDiv', 'editRetailForm');
     window.newProductForm = new NewProductForm('newProdDiv', 'newProdForm');
     window.newRetailForm = new NewRetailForm('newRetailDiv', 'newRetailForm');
+    window.newSalesForm = new NewSalesForm('newSalesDiv', 'newSalesForm');
     addListeners();
+    newSalesForm.loadProductSelector();
+    newSalesForm.loadLocationSelector();
 });

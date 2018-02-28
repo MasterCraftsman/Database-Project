@@ -176,9 +176,32 @@
                         </tbody>
                     </table>
                 </div>
-                <button id="newSaleBtn" class="btn btn-primary">Record a New Sale</button>
+                <button id="newSalesBtn" class="btn btn-primary">Record a New Sale</button>
             </div>
-            <div class="col">
+            <div id="newSalesDiv" class="col" style="visibility: hidden;">
+                <h2>Add Sale</h2>
+                <form id="newSalesForm">
+                    <div class="form-group">
+                        <label for="prodSelector">Product</label>
+                        <select id="prodSelector" class="form-control">
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="locSelector">Location</label>
+                        <select id="locSelector" class="form-control">
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="salesPrice">Sales Price</label>
+                        <input id="salesPrice" class="form-control" type="number" step="0.01" min="0" autocomplete="off" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="salesQty">Quantity</label>
+                        <input id="salesQty" class="form-control" type="number" min="0" autocomplete="off" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>&nbsp;
+                    <button type="reset" class="btn btn-danger">Cancel</button>
+                </form>
             </div>
         </div>
     </div>
